@@ -1,4 +1,6 @@
-//package evanmt.opsys.hw2.sim;
+/*
+ * Evan Thompson, Tausif Ahmed, Jack Cusick
+ */
 
 import java.util.ArrayList;
 
@@ -14,7 +16,8 @@ public abstract class CPU_Algorithm {
 	//private Integer TIME_REQ_RANGE = 3000;
 	
 	
-	protected static ArrayList<Process> procs;
+	protected ArrayList<Process> procs;
+	
 	
 	protected abstract void get_next_procs(ArrayList<Process> curr_proc);
 	

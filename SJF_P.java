@@ -1,4 +1,6 @@
-//package evanmt.opsys.hw2.sim;
+/*
+ * Evan Thompson, Tausif Ahmed, Jack Cusick
+ */
 
 import java.util.ArrayList;
 
