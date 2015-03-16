@@ -18,9 +18,16 @@ public abstract class CPU_Algorithm {
 	
 	protected ArrayList<Process> procs;
 	
-	
+	/**
+	 * @param curr_proc the current buffer of available cpus
+	 * @effect load the next processes from procs into the curr_proc buffer
+	 * @modifies curr_proc, procs
+	 */
 	protected abstract void get_next_procs(ArrayList<Process> curr_proc);
 	
+	/**
+	 * @effect executes the algorithm
+	 */
 	public abstract void exec();
 	
 	private Integer gen_num(int range, int offset){
