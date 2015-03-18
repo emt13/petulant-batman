@@ -224,10 +224,8 @@ public abstract class CPU_Algorithm {
 	public void print_cpu_util(ArrayList<Process> all_procs, int time){
 		int total_use = 0;
 		for(int i = 0; i < all_procs.size(); i++){
-			System.out.println("proc: " + all_procs.get(i).get_pid() + " used cpu for " + all_procs.get(i).get_cpu_use_time());
 			total_use += all_procs.get(i).get_cpu_use_time();
 		}
-		System.out.println("total_use: " + total_use);
 		double avg_cpu = (total_use/4.0)/time * 100;
 		DecimalFormat df = new DecimalFormat("########0.000");
 		System.out.println("Average CPU utilization: " + df.format(avg_cpu) + "%");
