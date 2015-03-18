@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Process {
 	//constant
 	private Integer INV_CPU = new Integer(-1);
-	private Integer MAX_BURST = new Integer(6);
+	private Integer MAX_BURST = new Integer(5); //six in total when starting from 0
 	
 	private Integer burst; //between 20-200ms
 	private boolean interactive;
@@ -62,8 +62,8 @@ public class Process {
 
 		all_turnarounds = new ArrayList<Integer>();
 		all_waits = new ArrayList<Integer>();
-
-		blocked_time = other.blocked_time;
+		curr_burst_time = new Integer(other.curr_burst_time);
+		blocked_time = new Integer(other.blocked_time);
 		pid = other.get_pid();
 		burst = new Integer(other.burst);
 		interactive = other.interactive;
@@ -95,6 +95,10 @@ public class Process {
 		return new Integer(burst);
 	}
 
+	public void set_burst(int val){
+		burst = new Integer(val);
+	}
+
 	/**
 	 * 
 	 * @return true if the process is currently blocked on i/o
@@ -108,7 +112,7 @@ public class Process {
 	 * @return true if the process is currently in its burst, false otherwise
 	 */
 	public boolean is_active(){
-		if(curr_burst_time > 0){ return true; }
+		if(curr_burst_time > 0 && blocked_time == 0){ return true; }
 		return false;
 	}
 
@@ -140,6 +144,7 @@ public class Process {
 	public void activate_burst(){
 		if(curr_burst_time == 0){
 			curr_burst_time = burst;
+			num_bursts++;
 		}	
 	}
 
@@ -177,6 +182,7 @@ public class Process {
 
 	public void set_wait(int time){
 		wait = new Integer(time - ready_start);
+		//wait = new Integer(time - ready_start - 1);
 		all_waits.add(new Integer(wait));
 	}
 
@@ -205,7 +211,11 @@ public class Process {
 	 * @return computation is done. false otherwise
 	 */
 	public boolean finished(){
-		if(!interactive && MAX_BURST <= num_bursts){ return true; }
+		if(!interactive && MAX_BURST <= num_bursts){ 
+			if(curr_burst_time == 0){
+				return true;
+			}	
+		}
 		/*Integer comp_time = num_bursts * burst;
 		if(comp_time >= time_required){
 			return true;
@@ -228,6 +238,22 @@ public class Process {
 	public void dec_blocked_time(){
 		if(blocked_time > 0)
 			blocked_time--;
+	}
+	
+	public Double get_avg_turnaround(){
+		Double sum = new Double(0);
+		for(int i = 0; i < all_turnarounds.size(); i++){
+			sum += new Double(all_turnarounds.get(i));
+		}
+		return sum / all_turnarounds.size();
+	}
+	
+	public Double get_avg_wait(){
+		Double sum = new Double(0);
+		for(int i = 0; i < all_waits.size(); i++){
+			sum += new Double(all_waits.get(i));
+		}
+		return sum / all_waits.size();
 	}
 
 	public String toString(){

@@ -16,7 +16,7 @@ public class RR extends CPU_Algorithm {
 	}
 	
 	@Override
-	protected void get_next_procs(ArrayList<Process> curr_proc){
+	protected void get_next_procs(int time){
 		
 	}
 	
