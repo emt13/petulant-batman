@@ -18,7 +18,9 @@ public class Process {
 	
 	private Integer wait;
 	private Integer turnaround;
-	
+
+	private Integer num_times_blocked;
+
 	private Integer blocked_time;
 
 	private Integer ready_start;
@@ -40,6 +42,7 @@ public class Process {
 	 */
 	public Process(String p, int b, boolean inter){
 		pid = new String(p);
+		num_times_blocked = new Integer(0);
 		burst = new Integer(b);
 		all_turnarounds = new ArrayList<Integer>();
 		all_waits = new ArrayList<Integer>();
@@ -60,6 +63,7 @@ public class Process {
 
 	public Process(Process other){
 
+		num_times_blocked = new Integer(other.num_times_blocked);
 		all_turnarounds = new ArrayList<Integer>();
 		all_waits = new ArrayList<Integer>();
 		curr_burst_time = new Integer(other.curr_burst_time);
@@ -93,6 +97,10 @@ public class Process {
 	 */
 	public Integer get_burst(){
 		return new Integer(burst);
+	}
+	
+	public Integer get_remaining_burst(){
+		return new Integer(curr_burst_time);
 	}
 
 	public void set_burst(int val){
@@ -182,6 +190,7 @@ public class Process {
 	 */
 	public void set_turnaround(int time){
 		turnaround = new Integer(time - ready_start);
+		if(wait != 0){ turnaround--; }
 		all_turnarounds.add(new Integer(turnaround));
 
 		if(turnaround < all_waits.get((all_turnarounds.size()-1))){
@@ -191,6 +200,7 @@ public class Process {
 
 	public void set_wait(int time){
 		wait = new Integer(time - ready_start);
+		if(ready_start != 0){ wait--; }
 		all_waits.add(new Integer(wait));
 	}
 
@@ -238,6 +248,7 @@ public class Process {
 	 */
 	public void set_blocked_time(int time){
 		blocked_time = time;
+		num_times_blocked++;
 	}
 
 	/**
@@ -330,6 +341,10 @@ public class Process {
 				"interactive? " + interactive + "\n" + 
 				"num burst: " + num_bursts + "\n" +
 				"total_wait " + wait + "ms\n" + 
-				"turnaround " + turnaround + "ms"; 
+				"turnaround " + turnaround + "ms\n" +
+				"curr burst: " + curr_burst_time + "ms\n" +
+				"curr blocked time: " + blocked_time + "ms\n" + 
+				"num times blocked: " + num_times_blocked + "\n" +
+				"finished? " + finished(); 
 	}
 }

@@ -117,6 +117,7 @@ public abstract class CPU_Algorithm {
 				if(context_time.get(i) == 0){
 					if(curr_procs.get(i) != null){
 						curr_procs.get(i).set_wait(time);
+						//curr_procs.get(i).activate_burst();
 					}
 				}
 			}
@@ -130,6 +131,7 @@ public abstract class CPU_Algorithm {
 			//subtract 1 from the time it needs to be blocked
 			tmp_p.dec_blocked_time();
 			if(!tmp_p.is_blocked()){
+				System.out.println("()()()()()()()()()()()()\n" + tmp_p);
 				procs.add(tmp_p);
 				blocked_procs.remove(i);
 				tmp_p.set_ready_entry(time);
@@ -166,26 +168,36 @@ public abstract class CPU_Algorithm {
 	 * @return true if the sim should stop (all CPU bound procs done) otherwise, false
 	 */
 	protected boolean should_stop(){
+		
+		//System.out.println("Passed procs: ");
 		//search the processes to find unfinished processes
 		for(int i = 0; i < procs.size(); i++){
 			//if a process is cpu_bound and not finished
 			if(!procs.get(i).is_interactive() && !procs.get(i).finished()){ 
 				return false; 
 			}
+	//		System.out.println(procs.get(i));
+	//		System.out.println("-------------------");
 		}
 
+		//System.out.println("Passed Current procs:");
 		for(int i = 0; i < curr_procs.size(); i++){
 			if(curr_procs.get(i) != null){
 				if(!curr_procs.get(i).is_interactive() && !curr_procs.get(i).finished()){
 					return false;
 				}
+	//			System.out.println(curr_procs.get(i));
+	//			System.out.println("-------------------");
 			}
 		}
 
+		//System.out.println("Passed Blocked_procs:");
 		for(int i = 0; i < blocked_procs.size(); i++){
 			if(!blocked_procs.get(i).is_interactive() && !blocked_procs.get(i).finished()){
 				return false;
 			}
+	//		System.out.println(blocked_procs.get(i));
+	//		System.out.println("-------------------");
 		}
 	//	print_curr_procs();
 	//	System.out.println("<**************************>");
