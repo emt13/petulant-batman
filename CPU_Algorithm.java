@@ -117,7 +117,6 @@ public abstract class CPU_Algorithm {
 				if(context_time.get(i) == 0){
 					if(curr_procs.get(i) != null){
 						curr_procs.get(i).set_wait(time);
-						//curr_procs.get(i).activate_burst();
 					}
 				}
 			}
@@ -131,7 +130,6 @@ public abstract class CPU_Algorithm {
 			//subtract 1 from the time it needs to be blocked
 			tmp_p.dec_blocked_time();
 			if(!tmp_p.is_blocked()){
-				System.out.println("()()()()()()()()()()()()\n" + tmp_p);
 				procs.add(tmp_p);
 				blocked_procs.remove(i);
 				tmp_p.set_ready_entry(time);

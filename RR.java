@@ -58,6 +58,108 @@ public class RR extends CPU_Algorithm {
 	}
 
 	public void context_handle_processes(ArrayList<Integer> context_cpu, ArrayList<Integer> cpu_slice){
+	
+		for(int i = 0; i < curr_procs.size(); i++){
+			if(context_cpu.get(i) == 0 && cpu_slice.get(i) != 0 && curr_procs.get(i) != null){
+				
+				Process tmp = curr_procs.get(i);
+
+				if(!tmp.is_active()){
+					tmp.activate_burst();
+					tmp.set_wait(time);	
+				}
+
+				tmp.dec_curr_burst();
+				cpu_slice.set(i, cpu_slice.get(i) - 1);
+
+				//if the burst process is completed
+				if(!tmp.is_active()){
+					//set turnaround
+					if(tmp.get_wait() == 0){
+						tmp.set_turnaround(time + 1);
+					}else{
+						tmp.set_turnaround(time + 1);
+					}
+					//setup for I/O blocking
+					print_proc_end(tmp, time);
+
+					//add to blocked procs
+					if(!tmp.finished()){
+						int val = gen_num(IO_BLOCK_RANGE, IO_BLOCK_OFF);
+						int burst_val;
+						if(tmp.is_interactive()){
+							burst_val = gen_num(BURST_RANGE, BURST_OFF);
+						}else{
+							burst_val = gen_num(CPU_BURST_RANGE, CPU_BURST_OFF);
+						}
+						tmp.set_burst(burst_val);
+						tmp.set_blocked_time(val);
+
+						blocked_procs.add(tmp);
+					}
+
+					//remove from curr_procs
+					curr_procs.set(i, null);
+
+					//set slice back to slice time
+					cpu_slice.set(i, slice_time);
+
+					//context switch
+					get_next_procs(time);
+
+					if(curr_procs.get(i) != null){
+						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp.get_pid() + " for process ID " + curr_procs.get(i).get_pid() + ")");
+						context_cpu.set(i, new Integer(4));
+					}else{
+						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp.get_pid() + " but no process to replace it)");
+						context_cpu.set(i, new Integer(2));
+					}
+				}else if(cpu_slice.get(i) == 0){
+					//bump tmp into the ready queue
+					procs.add(tmp);
+						
+					//add context switch
+					curr_procs.set(i, null);
+					get_next_procs(time);
+					cpu_slice.set(i, slice_time);
+
+					if(curr_procs.get(i) != null){
+						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp.get_pid() + " for process ID " + curr_procs.get(i).get_pid() + ")");
+						context_cpu.set(i, new Integer(4));
+					}else{
+						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp.get_pid() + " but no process to replace it)");
+						context_cpu.set(i, new Integer(2));
+					}
+				}
+
+			}else{
+				if(curr_procs.get(i) == null){
+					get_next_procs(time);
+					if(curr_procs.get(i) != null){
+						context_cpu.set(i, context_cpu.get(i) + 2);
+						if(curr_procs.get(i).is_interactive()){
+							System.out.println("[time " + time + "ms] " + curr_procs.get(i).get_type() + " process ID " + curr_procs.get(i).get_pid() + " has taken unused cpu, " +
+								(i + 1));	
+						}
+					}
+				}
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+		/*	
 		//check each of the curr_procs, if the process has finished its burst, relinquish.  if slice is done, switch it
 		for(int i = 0; i < curr_procs.size(); i++){
 			//empty cpu
@@ -125,10 +227,10 @@ public class RR extends CPU_Algorithm {
 				if(!curr_procs.get(i).is_active()){
 					curr_procs.get(i).activate_burst();
 				}
-			}*/
-		}
+			}
+		}*/
 	}
-
+/*
 	private void print_arr(ArrayList<Object> arr){
 		System.out.println("Printing array: ");
 
@@ -138,7 +240,7 @@ public class RR extends CPU_Algorithm {
 		}
 	}
 
-	/*private void print_context(ArrayList<Integer> arr){
+*/	/*private void print_context(ArrayList<Integer> arr){
 		System.out.println("printing values:");
 		for(int i = 0; i < arr.size(); i++){
 			System.out.print("("+arr.get(i) + ") ");
@@ -155,7 +257,7 @@ public class RR extends CPU_Algorithm {
 	}
 
 
-	private void attempt_activation(ArrayList<Integer> context_cpu){
+/*	private void attempt_activation(ArrayList<Integer> context_cpu){
 		for(int i = 0; i < curr_procs.size(); i++){
 			if(context_cpu.get(i) == slice_time && curr_procs.get(i) != null){
 				if(!curr_procs.get(i).is_active()){
@@ -164,13 +266,13 @@ public class RR extends CPU_Algorithm {
 			}
 		}
 	}
-
-	private void handle_blocked_processes_rr(int t){
+*/
+//	private void handle_blocked_processes_rr(int t){
 		//for(int i = 0; i < blocked_procs.size(); i++){
 
 			//if(blocked_procs.get(i).is_active() || blocked_procs.get(i).
 		//}
-	}
+//	}
 
 
 	@Override
@@ -200,18 +302,26 @@ public class RR extends CPU_Algorithm {
 			
 			//attempt_activation(context_cpu);
 
+//			System.out.println("TIME:----------------------------- " + time);
 			context_handle_processes(context_cpu, cpu_slice);
-		
+//			System.out.println("after context handle");
 			/*
 			print_curr_procs();
 			print_procs();
 			print_context(context_cpu);
 			print_context(cpu_slice);
 			*/
-
+//			System.out.println("before handle blocked");
 			handle_blocked_processes(time);
+//			System.out.println("After handle blocked");
 			
 			dec_context_switch(context_cpu, time);
+//			System.out.println("After dec context");
+			remove_finished_procs(time);
+//			System.out.println("after remove finished");
+
+			time++;
+//			System.out.println("blocked_size: " + blocked_procs.size() + " ||  procs size: " + procs.size()); 
 
 		//	System.out.println("time: " + time + " procs size: " + procs.size() + " blocked size: " + blocked_procs.size());
 
@@ -235,15 +345,15 @@ public class RR extends CPU_Algorithm {
 
 			//break;			
 
-			time++;
+			//time++;
 		}
 
-		System.out.println("Printing all processes:");
+/*		System.out.println("Printing all processes:");
 		for(int i = 0; i < all_procs.size(); i++){
 			System.out.println(all_procs.get(i));
 			System.out.println("---------------------");
 		}
-
+*/
 		display_data(all_procs, time);
 
 		//int time
