@@ -52,13 +52,12 @@ public class simulation {
 				System.out.println("Error: incorrect num processes");
 			}
 			
-			int cpu_time = -1;
 			if(!inter){
 				//generate a cpu time
-				cpu_time = gen_num(CPU_BURST_RANGE, CPU_BURST_OFF);
+				burst = gen_num(CPU_BURST_RANGE, CPU_BURST_OFF);
 			}
 			
-			Process tmp = new Process("" + (i + 1), burst, inter, cpu_time);
+			Process tmp = new Process("" + (i + 1), burst, inter);
 			
 			procs.add(tmp);
 		}

@@ -10,10 +10,10 @@ public abstract class CPU_Algorithm {
 	protected Integer NUM_CPUS;
 	//private Integer TIME_REQ_RANGE = 3000;
 	private Double P_INT = .8;
-	private Integer BURST_RANGE = 180;
-	private Integer BURST_OFF = 20;
-	private Integer CPU_BURST_RANGE = 2800;
-	private Integer CPU_BURST_OFF = 200;
+	protected Integer BURST_RANGE = 180;
+	protected Integer BURST_OFF = 20;
+	protected Integer CPU_BURST_RANGE = 2800;
+	protected Integer CPU_BURST_OFF = 200;
 	
 	
 	protected ArrayList<Process> procs;
@@ -38,7 +38,7 @@ public abstract class CPU_Algorithm {
 		}
 	}
 
-	private Integer gen_num(int range, int offset){
+	protected Integer gen_num(int range, int offset){
 		return (int) (Math.random()*range) + offset;
 	}
 	
@@ -58,7 +58,7 @@ public abstract class CPU_Algorithm {
 				System.out.println("[time 0ms] Interactive process ID " + procs.get(i).get_pid() + " entered the ready queue (requires " + procs.get(i).get_burst() + 
 							"ms CPU time)"  );
 			}else{
-				System.out.println("[time 0ms] CPU-Bound process ID " + procs.get(i).get_pid() + " entered the ready queue (requires " + procs.get(i).get_cpu_time() + 
+				System.out.println("[time 0ms] CPU-Bound process ID " + procs.get(i).get_pid() + " entered the ready queue (requires " + procs.get(i).get_burst() + 
 							"ms CPU time)"  );
 			}
 		}
@@ -81,6 +81,7 @@ public abstract class CPU_Algorithm {
 	}
 	
 	private void print_turnaround(){
+		/*
 		double t_turn = 0;
 		double min_turn = 2147483647; //max int
 		double max_turn = -1;
@@ -98,14 +99,16 @@ public abstract class CPU_Algorithm {
 		double avg_turn = t_turn / procs.size();
 		
 		System.out.printf("Turnaround time: min %f.000 ms; avg: %f.000 ms; max: %f.000\n", min_turn, avg_turn, max_turn);
+		*/
 	}
 	
 	private void print_total_wait(){
+		/*
 		double t_wait = 0;
 		double min_wait = 2147483647; //max int
 		double max_wait = -1;
 		for( int i = 0; i < procs.size(); i++){
-			double tmp_wait = procs.get(i).get_total_wait();
+			Integer tmp_wait = procs.get(i).get_wait();
 			t_wait += tmp_wait;
 			if(tmp_wait < min_wait){ 
 				min_wait = tmp_wait; 
@@ -118,6 +121,7 @@ public abstract class CPU_Algorithm {
 		double avg_wait = t_wait / procs.size();
 		
 		System.out.printf("Total wait time: min %f.000 ms; avg: %f.000 ms; max: %f.000 ms\n", min_wait, avg_wait, max_wait);
+		*/
 	}
 	
 	protected void print_data(){
