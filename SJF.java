@@ -128,8 +128,10 @@ public class SJF extends CPU_Algorithm {
 
 		//start up each of the processes
 		for(int i = 0; i < curr_procs.size(); i++){
-			curr_procs.get(i).set_wait(time);
-			curr_procs.get(i).activate_burst();
+			if (curr_procs.get(i) != null) {
+				curr_procs.get(i).set_wait(time);
+				curr_procs.get(i).activate_burst();
+			}
 		}
 
 		//print_curr_procs();
