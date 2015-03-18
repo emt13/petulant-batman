@@ -99,6 +99,11 @@ public class Process {
 		burst = new Integer(val);
 	}
 
+	public String get_type(){
+		if(!interactive){ return "CPU-Bound"; }
+		return "Interactive";
+	}
+
 	/**
 	 * 
 	 * @return true if the process is currently blocked on i/o
