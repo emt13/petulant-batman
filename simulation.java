@@ -97,7 +97,7 @@ public class simulation {
 		algo.exec();
 		SJF algo1 = new SJF(procs, NUM_CPUS);
 		algo1.exec();
-		SJF_P algo2 = new SJF_P(procs, NUM_CPUS);
+		SRT algo2 = new SRT(procs, NUM_CPUS);
 		algo2.exec();
 		RR algo3 = new RR(procs, NUM_CPUS, SLICE);
 		algo3.exec();
