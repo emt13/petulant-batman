@@ -5,7 +5,7 @@
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
-public class FCFS extends CPU_Algorithm{
+public class FCFS extends CPU_Algorithm {
 	
 	//used to hold processes that aren't ready for the ready queue
 	ArrayList<Process> blocked_processes;
@@ -46,7 +46,7 @@ public class FCFS extends CPU_Algorithm{
 	
 	
 
-	private void burst_context_handle(ArrayList<Integer> context_time, int time){
+	private void burst_context_handle(ArrayList<Integer> context_time, int time) {
 		//go through all of the processes and check if any have hit their burst
 		for(int i = 0; i < curr_procs.size(); i++){
 			if(context_time.get(i) == 0 && curr_procs.get(i) != null){
