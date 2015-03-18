@@ -1,5 +1,5 @@
 /*
- * Evan Thompson, Tausif Ahmed, Jack Cusick
+ * Evan Thompson, Tausif Ahmed
  */
 
 import java.util.ArrayList;
@@ -158,14 +158,7 @@ public class FCFS extends CPU_Algorithm{
 		
 		}
 
-		//System.out.println("All processes: ");
-
-		//for(int i = 0; i < all_procs.size(); i++){
-		//	System.out.println("-----------------------");
-		//	System.out.println(all_procs.get(i));
-		//}
-		//uncomment to display all of the data
-		display_data(all_procs);
+		display_data(all_procs, time);
 		
 		//int time
 		//while(!should_stop)

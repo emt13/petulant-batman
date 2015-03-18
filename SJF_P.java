@@ -1,5 +1,5 @@
 /*
- * Evan Thompson, Tausif Ahmed, Jack Cusick
+ * Evan Thompson, Tausif Ahmed
  */
 
 import java.util.ArrayList;

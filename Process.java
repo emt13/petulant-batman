@@ -1,5 +1,5 @@
 /*
- * Evan Thompson, Tausif Ahmed, Jack Cusick
+ * Evan Thompson, Tausif Ahmed
  */
 import java.util.ArrayList;
 
@@ -178,11 +178,14 @@ public class Process {
 	public void set_turnaround(int time){
 		turnaround = new Integer(time - ready_start);
 		all_turnarounds.add(new Integer(turnaround));
+
+		if(turnaround < all_waits.get((all_turnarounds.size()-1))){
+			all_waits.set((all_turnarounds.size()-1), wait);
+		}
 	}
 
 	public void set_wait(int time){
 		wait = new Integer(time - ready_start);
-		//wait = new Integer(time - ready_start - 1);
 		all_waits.add(new Integer(wait));
 	}
 
@@ -255,6 +258,66 @@ public class Process {
 		}
 		return sum / all_waits.size();
 	}
+
+	public Integer get_min_turnaround(){
+		Integer min = all_turnarounds.get(0);
+		for(int i = 0; i < all_turnarounds.size(); i++){
+			if(min > all_turnarounds.get(i)){
+				min = all_turnarounds.get(i);
+			}
+		}
+		return new Integer(min);
+	}
+
+	public Integer get_max_turnaround(){	
+		Integer max = all_turnarounds.get(0);
+		for(int i = 0; i < all_turnarounds.size(); i++){
+			if(max < all_turnarounds.get(i)){
+				max = all_turnarounds.get(i);
+			}
+		}
+		return new Integer(max);
+	}
+
+	public Integer get_max_wait(){
+		Integer max = all_waits.get(0);
+		for(int i = 0; i < all_waits.size(); i++){
+			if(max < all_waits.get(i)){
+				max = all_waits.get(i);
+			}
+		}
+		return new Integer(max);
+	}
+
+	public Integer get_min_wait(){
+		Integer min = all_waits.get(0);
+		for(int i = 0; i < all_waits.size(); i++){
+			if(min > all_waits.get(i)){
+				min = all_waits.get(i);
+			}
+		}
+		return new Integer(min);
+	}
+
+	public int get_cpu_use_time(){
+		int sum = 0;
+		for(int i = 0; i < all_turnarounds.size(); i++){
+			sum += (all_turnarounds.get(i) - all_waits.get(i));
+		}
+		return sum;
+	}
+
+	public double get_avg_cpu_time(){
+		double sum = 0;
+		double all_wait_time = 0;
+		for(int i = 0; i < all_turnarounds.size(); i++){
+			sum += (all_turnarounds.get(i) - all_waits.get(i));
+			all_wait_time += all_turnarounds.get(i);
+		}
+		if(sum < 0){ sum *= -1; }
+		return sum / all_wait_time * 100;
+	}
+
 
 	public String toString(){
 		return "(" + pid + ")\n" + 

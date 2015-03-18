@@ -1,8 +1,9 @@
 /*
- * Evan Thompson, Tausif Ahmed, Jack Cusick
+ * Evan Thompson, Tausif Ahmed
  */
 
 import java.util.ArrayList;
+import java.text.DecimalFormat;
 
 public abstract class CPU_Algorithm {
 	
@@ -192,58 +193,85 @@ public abstract class CPU_Algorithm {
 		return true;
 	}
 	
-	private void print_turnaround(){
-		/*
-		double t_turn = 0;
-		double min_turn = 2147483647; //max int
-		double max_turn = -1;
-		for( int i = 0; i < procs.size(); i++){
-			double tmp_turn = procs.get(i).get_turnaround();
-			t_turn += tmp_turn;
-			if(tmp_turn < min_turn){ 
-				min_turn = tmp_turn; 
+	private void print_turnaround(ArrayList<Process> all_procs){
+
+		int min = all_procs.get(0).get_min_turnaround();
+		int max = all_procs.get(0).get_max_turnaround();
+		double avg = 0;
+
+		for(int i = 0; i < all_procs.size(); i++){
+			Process tmp = all_procs.get(i);
+			int tmp_min = tmp.get_min_turnaround();
+			int tmp_max = tmp.get_max_turnaround();
+			double tmp_avg = tmp.get_avg_turnaround();
+
+			if(tmp_min < min){
+				min = tmp_min;
 			}
-			if(tmp_turn > max_turn){
-				max_turn = tmp_turn;
+			if(tmp_max > max){
+				max = tmp_max;
 			}
+			avg += tmp_avg;
 		}
+
+		avg = avg/all_procs.size();
+	
+		DecimalFormat df = new DecimalFormat("#########0.000");
 		
-		double avg_turn = t_turn / procs.size();
-		
-		System.out.printf("Turnaround time: min %f.000 ms; avg: %f.000 ms; max: %f.000\n", min_turn, avg_turn, max_turn);
-		*/
+		System.out.println("Turnaround time: min: "+ min+ "ms; avg: "+df.format(avg) + "ms; max: " + max +"ms");
+	}
+
+	public void print_cpu_util(ArrayList<Process> all_procs, int time){
+		int total_use = 0;
+		for(int i = 0; i < all_procs.size(); i++){
+			System.out.println("proc: " + all_procs.get(i).get_pid() + " used cpu for " + all_procs.get(i).get_cpu_use_time());
+			total_use += all_procs.get(i).get_cpu_use_time();
+		}
+		System.out.println("total_use: " + total_use);
+		double avg_cpu = (total_use/4.0)/time * 100;
+		DecimalFormat df = new DecimalFormat("########0.000");
+		System.out.println("Average CPU utilization: " + df.format(avg_cpu) + "%");
+
+		System.out.println("Average CPU utilization per process: ");
+		for(int i = 0; i < all_procs.size(); i++){
+			System.out.println(all_procs.get(i).get_pid() + ": " + df.format(all_procs.get(i).get_avg_cpu_time()) + "%");
+		}
+
 	}
 	
-	public void display_data(ArrayList<Process> all_procs){
-		
+	public void display_data(ArrayList<Process> all_procs, int time){
+		print_turnaround(all_procs);	
+		print_total_wait(all_procs);
+		print_cpu_util(all_procs, time);
 	}
 
 
-	private void print_total_wait(){
-		/*
-		double t_wait = 0;
-		double min_wait = 2147483647; //max int
-		double max_wait = -1;
-		for( int i = 0; i < procs.size(); i++){
-			Integer tmp_wait = procs.get(i).get_wait();
-			t_wait += tmp_wait;
-			if(tmp_wait < min_wait){ 
-				min_wait = tmp_wait; 
+	private void print_total_wait(ArrayList<Process> all_procs){
+		int min = all_procs.get(0).get_min_wait();
+		int max = all_procs.get(0).get_max_wait();
+		double avg = 0;
+
+		for(int i = 0; i < all_procs.size(); i++){
+			Process tmp = all_procs.get(i);
+			int tmp_min = tmp.get_min_wait();
+			int tmp_max = tmp.get_max_wait();
+			double tmp_avg = tmp.get_avg_wait();
+
+			if(tmp_min < min){
+				min = tmp_min;
 			}
-			if(tmp_wait > max_wait){
-				max_wait = tmp_wait;
+			if(tmp_max > max){
+				max = tmp_max;
 			}
+			avg += tmp_avg;
 		}
-		
-		double avg_wait = t_wait / procs.size();
-		
-		System.out.printf("Total wait time: min %f.000 ms; avg: %f.000 ms; max: %f.000 ms\n", min_wait, avg_wait, max_wait);
-		*/
-	}
+
+		avg = avg/all_procs.size();
 	
-	protected void print_data(){
-		print_turnaround();
-		print_total_wait();
+		DecimalFormat df = new DecimalFormat("#########0.000");
+		
+		System.out.println("Total wait time: min: "+ min+ "ms; avg: "+df.format(avg) + "ms; max: " + max +"ms");
+	
 	}
 	
 }
