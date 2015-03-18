@@ -3,7 +3,7 @@
  */
 import java.util.ArrayList;
 
-public class Process {
+public class Process implements Comparable<Process>{
 	//constant
 	private Integer INV_CPU = new Integer(-1);
 	private Integer MAX_BURST = new Integer(5); //six in total when starting from 0
@@ -73,6 +73,17 @@ public class Process {
 		wait = new Integer(other.wait);
 		turnaround = new Integer(other.turnaround);
 		//cpu_time = new Integer(other.cpu_time);
+	}
+	
+	@Override
+	public int compareTo(Process p) {
+		if(this.get_burst() > p.get_burst()) {
+			return 1;
+		}
+		if(this.get_burst() < p.get_burst()) {
+			return -1;
+		}
+		return 0;
 	}
 
 	public String get_pid(){
