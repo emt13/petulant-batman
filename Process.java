@@ -2,8 +2,9 @@
  * Evan Thompson, Tausif Ahmed
  */
 import java.util.ArrayList;
+import java.util.Comparator;
 
-public class Process implements Comparable<Process>{
+public class Process implements Comparable<Process>, Comparator<Process>{
 	//constant
 	private Integer INV_CPU = new Integer(-1);
 	private Integer MAX_BURST = new Integer(5); //six in total when starting from 0
@@ -57,7 +58,7 @@ public class Process implements Comparable<Process>{
 			cpu_time = new Integer(INV_CPU);
 		}*/
 	}
-
+	
 	public Process(Process other){
 
 		all_turnarounds = new ArrayList<Integer>();
@@ -85,6 +86,11 @@ public class Process implements Comparable<Process>{
 		}
 		return 0;
 	}
+	
+	@Override
+	public int compare(Process p1, Process p2) {
+		return p1.get_burst() - p2.get_burst();
+	}
 
 	public String get_pid(){
 		return new String(pid);
@@ -102,12 +108,16 @@ public class Process implements Comparable<Process>{
 	 * 
 	 * @return the length of a burst
 	 */
-	public Integer get_burst(){
+	public Integer get_burst() {
 		return new Integer(burst);
 	}
 
-	public void set_burst(int val){
+	public void set_burst(int val) {
 		burst = new Integer(val);
+	}
+	
+	public Integer get_remaining_burst() {
+		return new Integer(curr_burst_time);
 	}
 
 	public String get_type(){
