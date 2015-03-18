@@ -8,8 +8,9 @@ public class RR extends CPU_Algorithm {
 
 	private int slice_time;
 	
-	public RR(int num_procs, int num_cpus, int s){
-		super.NUM_PROCESSES = num_procs;
+	public RR(ArrayList<Process> processes, int num_cpus, int s){
+		copy_in_procs(processes);
+		super.NUM_PROCESSES = procs.size();
 		super.NUM_CPUS = num_cpus;
 		slice_time = s;
 	}

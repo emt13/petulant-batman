@@ -32,7 +32,6 @@ public class Process {
 	 */
 	public Process(String p, /*int t_req,*/ int b, boolean inter, int c_time){
 		pid = new String(p);
-		//time_required = new Integer(t_req);
 		burst = new Integer(b);
 		interactive = inter;
 		num_bursts = new Integer(0);
@@ -45,7 +44,18 @@ public class Process {
 			cpu_time = new Integer(INV_CPU);
 		}
 	}
-	
+
+	public Process(Process other){
+		pid = other.get_pid();
+		burst = new Integer(other.burst);
+		interactive = other.interactive;
+		num_bursts = new Integer(other.num_bursts);
+		blocked_io = other.blocked_io;
+		total_wait = new Integer(other.total_wait);
+		turnaround = new Integer(other.turnaround);
+		cpu_time = new Integer(other.cpu_time);
+	}
+
 	public String get_pid(){
 		return new String(pid);
 	}
@@ -62,16 +72,16 @@ public class Process {
 	 * 
 	 * @return the cpu_time required for this process.  -1 if interactive
 	 */
-	public Double get_cpu_time(){
-		return new Double(cpu_time);
+	public Integer get_cpu_time(){
+		return new Integer(cpu_time);
 	}
 	
 	/**
 	 * 
 	 * @return the length of a burst
 	 */
-	public Double get_burst(){
-		return new Double(burst);
+	public Integer get_burst(){
+		return new Integer(burst);
 	}
 	/**
 	 * 
@@ -98,8 +108,8 @@ public class Process {
 	 * 
 	 * @return the total time the process has waited in the ready queue
 	 */
-	public Double get_total_wait(){
-		return new Double(total_wait);
+	public Integer get_total_wait(){
+		return new Integer(total_wait);
 	}
 	
 	/**

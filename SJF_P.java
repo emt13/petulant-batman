@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 public class SJF_P extends CPU_Algorithm {
 
-	public SJF_P(int num_procs, int num_cpus){
-		super.NUM_PROCESSES = num_procs;
+	public SJF_P(ArrayList<Process> in_proc, int num_cpus){
+		copy_in_procs(in_proc);
+		super.NUM_PROCESSES = procs.size();
 		super.NUM_CPUS = num_cpus;
 	}
 	

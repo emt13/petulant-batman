@@ -8,12 +8,12 @@ public abstract class CPU_Algorithm {
 	
 	protected Integer NUM_PROCESSES;
 	protected Integer NUM_CPUS;
+	//private Integer TIME_REQ_RANGE = 3000;
 	private Double P_INT = .8;
 	private Integer BURST_RANGE = 180;
 	private Integer BURST_OFF = 20;
 	private Integer CPU_BURST_RANGE = 2800;
 	private Integer CPU_BURST_OFF = 200;
-	//private Integer TIME_REQ_RANGE = 3000;
 	
 	
 	protected ArrayList<Process> procs;
@@ -29,7 +29,15 @@ public abstract class CPU_Algorithm {
 	 * @effect executes the algorithm
 	 */
 	public abstract void exec();
-	
+
+	//copies in new processes
+	protected void copy_in_procs(ArrayList<Process> in_procs){
+		procs = new ArrayList<Process>();
+		for(int i = 0; i < in_procs.size(); i++){
+			procs.add(new Process(in_procs.get(i)));
+		}
+	}
+
 	private Integer gen_num(int range, int offset){
 		return (int) (Math.random()*range) + offset;
 	}
@@ -42,52 +50,20 @@ public abstract class CPU_Algorithm {
 			System.out.println("*********************");
 		}
 	}
-	
-	protected void InitProcs(){
+
+	protected void print_ready_entry(){
 		
-		procs = new ArrayList<Process>();
-		
-		//gets the number of interactive processes (rounds down so there will always be a CPU bound)
-		int num_inter = (int)(NUM_PROCESSES * P_INT);
-		int num_cpu_bound = NUM_PROCESSES - num_inter;
-		
-		//initialize NUM_PROCESSES number of processes
-		for(int i = 0; i < NUM_PROCESSES; i++){
-			//generate a burst time
-			int burst = gen_num(BURST_RANGE, BURST_OFF);
-			
-			boolean inter = false;
-			
-			if(num_inter != 0 && num_cpu_bound != 0){
-				int val = gen_num(2,0);
-				//interactive
-				if(val == 0){
-					inter = true;
-					num_inter--;
-				}else{
-					num_cpu_bound--;
-				}
-			}else if(num_inter != 0){ //num_cpu_bound == 0
-				inter = true;
-				num_inter--;
-			}else if(num_cpu_bound != 0){ //num_inter == 0
-				num_cpu_bound--;
-			}else{ //both 0
-				System.out.println("Error: incorrect num processes");
+		for(int i = 0; i < procs.size(); i++){
+			if(procs.get(i).is_interactive()){
+				System.out.println("[time 0ms] Interactive process ID " + procs.get(i).get_pid() + " entered the ready queue (requires " + procs.get(i).get_burst() + 
+							"ms CPU time)"  );
+			}else{
+				System.out.println("[time 0ms] CPU-Bound process ID " + procs.get(i).get_pid() + " entered the ready queue (requires " + procs.get(i).get_cpu_time() + 
+							"ms CPU time)"  );
 			}
-			
-			int cpu_time = -1;
-			if(!inter){
-				//generate a cpu time
-				cpu_time = gen_num(CPU_BURST_RANGE, CPU_BURST_OFF);
-			}
-			
-			Process tmp = new Process("" + i, burst, inter, cpu_time);
-			procs.add(tmp);
 		}
-		
-		print_procs();
 	}
+
 	
 	/**
 	 * 
