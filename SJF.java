@@ -7,15 +7,24 @@ import java.util.Collections;
 
 public class SJF extends CPU_Algorithm {
 
+	/**
+	 * @param in_procs: list of processes
+	 * @param num_cpus: # of cpus
+	 * @effect initialize SJF object
+	 */
 	public SJF(ArrayList<Process> in_procs, int num_cpus) {
 		copy_in_procs(in_procs);
 		super.NUM_PROCESSES = procs.size();
 		super.NUM_CPUS = num_cpus;
 	}
 	
+	/**
+	 * @param time: current time
+	 * @effect get next set of processes for CPU
+	 */
 	@Override
 	protected void get_next_procs(int time) {
-		// if this is the initial first processes      
+		// If this is the initial first processes      
 		if(curr_procs.size() == 0) {
 			for(int i = 0; i < super.NUM_CPUS; i++) {
 				Process tmp = null;
@@ -27,7 +36,7 @@ public class SJF extends CPU_Algorithm {
 		Collections.sort(procs);	
 
 		
-		// get the first n processes, fill in the null slots
+		// Get the first n processes, fill in the null slots
 		for(int i = 0; i < curr_procs.size(); i++) {
 			if(procs.size() > 0 && curr_procs.get(i) == null) {
 				curr_procs.set(i, procs.remove(0));
@@ -36,8 +45,13 @@ public class SJF extends CPU_Algorithm {
 		}
 	}
 	
+	/**
+	 * @param context_time: list of context times
+	 * @param time: current time
+	 * @effect handle the processes in the CPUs
+	 */
 	private void burst_context_handle(ArrayList<Integer> context_time, int time) {
-		//go through all of the processes and check if any have hit their burst
+		// Go through all of the processes and check if any have hit their burst
 		for(int i = 0; i < curr_procs.size(); i++) {
 			if(context_time.get(i) == 0 && curr_procs.get(i) != null) {
 				Process tmp_p = curr_procs.get(i);
@@ -45,12 +59,12 @@ public class SJF extends CPU_Algorithm {
 					tmp_p.activate_burst();
 					tmp_p.set_wait(time);
 				}
-				//decrement the timer in this process
+				// Decrement the timer in this process
 				tmp_p.dec_curr_burst();	
-				//check if this completes the burst for this process
+				// Check if this completes the burst for this process
 				if(!tmp_p.is_active()) {
 
-					//set the turnaround time for this burst
+					// Set the turnaround time for this burst
 					if(tmp_p.get_wait() > 0) {
 						tmp_p.set_turnaround(time + 1);
 					} else {
@@ -60,19 +74,19 @@ public class SJF extends CPU_Algorithm {
 
 					print_proc_end(tmp_p, time);
 					if(!tmp_p.finished()) {  
-						//generate its blocking time
+						// Generate its blocking time
 						int val = gen_num(IO_BLOCK_RANGE, IO_BLOCK_OFF);
 						tmp_p.set_blocked_time(val);
-						//add the process to the list of blocked processes
+						// Add the process to the list of blocked processes
 						blocked_procs.add(tmp_p);
 					}
 						
-					//set the spot in the current proc to null
+					// Set the spot in the current proc to null
 					curr_procs.set(i,null);
-					//populate with the next process
+					// Populate with the next process
 					get_next_procs(time);
 	
-					//if the current process isn't null
+					// If the current process isn't null
 					if(curr_procs.get(i) != null) {
 						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp_p.get_pid() + " for process ID " + curr_procs.get(i).get_pid() + ")");
 						context_time.set(i, new Integer(4));
@@ -80,7 +94,6 @@ public class SJF extends CPU_Algorithm {
 						System.out.println("[time " + time + "ms] Context switch (swapping out process ID " + tmp_p.get_pid() + " with no process to replace it)");
 						context_time.set(i, new Integer(2));
 					}
-					//print_curr_procs();					
 				}
 			} else {
 				if(curr_procs.get(i) == null) {
@@ -95,10 +108,12 @@ public class SJF extends CPU_Algorithm {
 					}
 				}
 			}
-			
 		}
 	}
 	
+	/**
+	 * @effect run the algorithm
+	 */
 	@Override
 	public void exec() {
 
@@ -107,37 +122,35 @@ public class SJF extends CPU_Algorithm {
 		print_ready_entry();
 		
 		int time = 0;
-		//cpu queue
+		// Cpu queue
 		curr_procs = new ArrayList<Process>();
-		//blocked queue
+		// Blocked queue
 		blocked_procs = new ArrayList<Process>();
 
 		ArrayList<Process> all_procs = new ArrayList<Process>(procs);
 
-		//load the next processes into the current ones
+		// Load the next processes into the current ones
 		get_next_procs(time);
 	
-		//used to keep track of context switches
+		// Used to keep track of context switches
 		ArrayList<Integer> context_time = new ArrayList<Integer>();
 
-		//sets up the context switch
+		// Sets up the context switch
 		setup_context_cpu(context_time);
 
-		//set all of them to enter at time 0
+		// Set all of them to enter at time 0
 		set_start_ready();
 
-		//start up each of the processes
-		for(int i = 0; i < curr_procs.size(); i++){
+		// Start up each of the processes
+		for(int i = 0; i < curr_procs.size(); i++) {
 			if (curr_procs.get(i) != null) {
 				curr_procs.get(i).set_wait(time);
 				curr_procs.get(i).activate_burst();
 			}
 		}
 
-		//print_curr_procs();
-
-		//go until all the CPU-bound processes are finished (6 bursts)
-		while(!super.should_stop()){
+		// Go until all the CPU-bound processes are finished (6 bursts)
+		while(!super.should_stop()) {
 			time++;
 
 			dec_context_switch(context_time, time);
@@ -151,18 +164,5 @@ public class SJF extends CPU_Algorithm {
 		}
 
 		display_data(all_procs, time);
-
-		
-		//int time
-				//while(!should_stop)
-				//  load shortest n procs (burst time?, not sure)
-				//  if(termination conditions met for a proc in current n procs --> I/O, finished)
-				//		get blocktime (1000ms - 4500ms) -> set in proc
-				//  	pop it onto the queue
-				//		context switch timer (4ms)
-				//		put next proc onto the cpu
-				//  time++
-		
 	}
-
 }
